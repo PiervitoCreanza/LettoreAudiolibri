@@ -18,7 +18,7 @@ ipcRenderer.on('read-this', function(event, data, bookPath) {
     console.log(data)
     document.getElementById("audio-file").src = bookPath
     document.getElementById("title").innerHTML = data.name
-    document.getElementById("subtitle").innerHTML = "capitolo " + data.chapter + " su " + data.total_chapters;
+    document.getElementById("subtitle").innerHTML = data.description
     // Player 
     new GreenAudioPlayer('.audio-player');
     

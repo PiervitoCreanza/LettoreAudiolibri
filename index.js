@@ -123,7 +123,7 @@ function open_login_window(){
         height: 730,
     });
     loginWindow.setResizable(false);
-    //loginWindow.webContents.openDevTools();
+    loginWindow.webContents.openDevTools();
     // Load html into window
     loginWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'src/pages/userLogin.html'),
@@ -217,6 +217,10 @@ ipc.on('login-user-id', (event, userId) => {
       });
 
     loginWindow.close()
+});
+
+ipc.on('quit-main', function(){
+    app.quit()
 });
 
 ipc.on('quit', function() {
