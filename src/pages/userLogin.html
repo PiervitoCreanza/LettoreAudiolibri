@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <title>Lettore Audiolibri</title>
+    <link rel="stylesheet" href="src/index.scss">
+</head>
+
+<body>
+    <div class="welcome-login">
+        <img class="logo-login" src="src/img/logo.png">
+        <h1 class="login-text">Accedi</h1>        
+    </div>
+    <div class="wrapper">
+        <form id="login">
+            <div id="prompt-usr" style="height: 24px;"></div>
+            <input type="text" placeholder="Nome Utente" id="usr" name="user_name" required>
+            <br>
+            <div id="prompt-pwd" style="height: 24px;"></div>
+            <input type="password" placeholder="Password" id="pwd" name="password" required>
+            <br><br><br><br>            
+            <button type='button' type="submit" class="login-button" id="button" onclick="form_click() ">Login</button>
+        </form>
+    </div>  
+    
+    <script>
+
+            window.$ = window.jquery = require('jquery')
+            function form_click(user_name, password) {
+                var user_name = document.getElementById("usr").value
+                var password = document.getElementById("pwd").value
+                
+                if (!user_name) {
+                $('#prompt-usr').hide().removeClass().addClass('error').fadeIn(400).html('Inserisci il tuo nome utente');
+                } else {
+                    $('#prompt-usr').html("")
+                    if (!password) {                    
+                    $('#prompt-pwd').hide().removeClass().addClass('error').fadeIn(400).html('Inserisci la tua password');
+                    } else {
+                        }
+                        $('#prompt-pwd').html("")
+                        $.ajax({
+                        url: "https://api.lettoreaudiolibri.it/login.php",
+                        method: "POST",
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            "username": user_name,
+                            "password": password
+                        }),
+
+                        
+                                        
+                        success: function(response) {
+                            if (response.user_id) {
+                                var user_id = response.user_id
+                                const ipc = require('electron').ipcRenderer;
+                                ipc.send('login-user-id', user_id);
+                                
+                            } else if (response.message == "invalid username") {
+                                $('#prompt-usr').hide().removeClass().addClass('error').fadeIn(400).html('Nome utente non valido');
+                                console.log("invalid username")                        
+                            } else if (response.message == "invalid password") {
+                                $('#prompt-pwd').hide().removeClass().addClass('error').fadeIn(400).html('Password non valida');
+                                console.log("invalid pwd")
+                            }
+                        }    
+                    });
+                    }
+                    }
+
+                
+                
+
+                
+                
+
+            document.addEventListener("keydown", function (e) {
+                if (e.which === 13) {
+                    form_click()
+                }
+            });
+            
+    </script>
+    
+    <script>
+            
+            document.addEventListener("keydown", function (e) {
+                if (e.which === 116) {
+                    require('remote').getCurrentWindow().toggleDevTools();
+                } else if (e.which === 117) {
+                    location.reload();
+                }
+            });
+        </script>
+</body>
+</html>

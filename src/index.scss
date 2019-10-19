@@ -1,0 +1,122 @@
+@import url('../node_modules/bootstrap/dist/css/bootstrap.min.css');
+@import url('fonts/Poppins-SemiBold.ttf');
+
+
+
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+}
+h1, h2, h3, h4, h5, h6, p {
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+body {
+    -ms-overflow-style: scrollbar;
+    -webkit-app-region:drag;
+}
+
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="text"],
+input,
+button,
+textarea ,
+.controls{
+    -webkit-app-region: no-drag;
+    -webkit-user-select: none;
+    
+}
+.subtitle {
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    color: #d8d8d8;
+
+}
+body {
+    background-color: #192133;
+    color: white;    
+}
+
+  
+.audio-player {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.title {
+    text-align: center;
+    padding-top: 30px;
+}
+
+.chapter {
+    text-align: center;
+}
+.player {
+    padding-top: 20px;
+    width: 100%;
+}
+
+/* Main */
+.welcome {
+    padding-top: 60px;
+    text-align: center;
+    padding-bottom: 50px;
+}
+
+.logo {
+    padding-top: 80px;
+}
+
+#button {
+    height: 45px;
+    width: 200px;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 5px;
+    border: none;
+    background-color: #3e4dec;
+    color: white;
+    outline:none;
+}
+
+.wrapper {
+    text-align: center;
+}
+
+/* user-login.html */
+.login {
+    text-align: center;
+}
+
+
+.login-text {
+    padding-top: 50px;
+    font-weight: 500;
+}
+
+input {
+    width: 50%;
+    padding: 10px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 5px;
+    outline:none;
+}
+
+.login-button {
+    width: 50% !important;
+}
+
+.welcome-login {
+    padding-top: 60px;
+    text-align: center;
+    padding-bottom: 26px;
+}
+
