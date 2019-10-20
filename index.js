@@ -62,7 +62,7 @@ function open_mainWindow() {
         height: 630,
         titleBarStyle: 'hidden',
         });
-        mainWindow.webContents.openDevTools();
+        //mainWindow.webContents.openDevTools();
         // mainWindow.setFullScreen(true)
         // Load html into window
         mainWindow.loadURL(url.format({
@@ -102,7 +102,7 @@ function openAudioPlayer(){
     });
     audioPlayer.setAlwaysOnTop(true);
     audioPlayer.setResizable(false);
-    audioPlayer.webContents.openDevTools();
+    //audioPlayer.webContents.openDevTools();
     // Load html into window
     audioPlayer.loadURL(url.format({
         pathname: path.join(__dirname, 'src/pages/audio-player.html'),
@@ -123,7 +123,7 @@ function open_login_window(){
         height: 730,
     });
     loginWindow.setResizable(false);
-    loginWindow.webContents.openDevTools();
+    //loginWindow.webContents.openDevTools();
     // Load html into window
     loginWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'src/pages/userLogin.html'),

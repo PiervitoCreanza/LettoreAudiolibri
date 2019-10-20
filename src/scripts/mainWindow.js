@@ -28,13 +28,13 @@ function say(msg) {
     speechSynthesis.speak(msg);
 }
 
-function closeApp() {
+function closeApp() { // Close the app
     sayPromise("Mi spengo subito").then(
         () => ipcRenderer.send('quit-main')
     );    
 };
 
-function checkSpace(timeout) {
+function checkSpace(timeout) { // Check space press with timeout
     var is_fired = false;        
     Mousetrap.bind('space', function() { 
         if (!is_fired) {
@@ -51,9 +51,8 @@ function checkSpace(timeout) {
     }, timeout)
 }
 
-function sayPromise (text) {
-    const utterance = new SpeechSynthesisUtterance(text);
-    speechSynthesis.speak(utterance);
+function sayPromise (text) { // Say text with promise
+    say(text)
     return new Promise(resolve => {
         const id = setInterval(() => {
         if (speechSynthesis.speaking === false) {
@@ -63,6 +62,33 @@ function sayPromise (text) {
         }, 100);
     });
 };
+
+const randomItem = (list) => { // Pick random item from list
+    return list[Math.floor(Math.random()*list.length)];
+}
+
+const welcomeUser = () => { // Produces a random welcome message
+    //Get random element 
+    var randomWelcome = randomItem(welcomeMessages);
+    var randomSentence = randomItem(sentences);
+
+    var d = new Date(); // Get date
+    var h = d.getHours(); // Get hour
+
+    switch (true) { // Choose what word to sat based on day hour
+        case (h <13): 
+            welcome = 'Buongiorno';    
+            break;
+
+        case (13<h<17):
+            welcome = 'Buon pomeriggio'; 
+            break;
+        case (h>17):
+            welcome = 'Buonasera'; 
+            break;
+    }
+    return `${welcome} ${userName}. ${randomWelcome}. ${randomSentence}`; // Ruturn the sentence
+}
 
 const read = (userId) => {
     $.ajax({
@@ -131,7 +157,7 @@ ipcRenderer.on('reading-finished', function() {
                     closeApp();
                 } else {
                     sayPromise(textToSpeech).then(
-                        () => say("Se sì premi spazio, altrimenti mi spegnerò tra un minuto.")
+                        () => say("Se si premi spazio, altrimenti mi spegnerò tra un minuto.")
                     )                    
                     checkSpace(60000);
                 }
@@ -147,5 +173,10 @@ ipcRenderer.on('reading-finished', function() {
 })
 
 /* !!**** START *****!! */
+const welcomeMessages = ['come va?', 'tutto bene?', 'oggi ti trovo bene', 'spero vada tutto bene', 'io sto bene e tu?', 'che bello poter trascorrere del tempo insieme']
+const sentences = ['Ti ho già detto che mi piace molto leggere?', 'Non vedo lora dicontinuare a leggere!', 'Finalmente leggiamo qualcosa!', 'Questo libro mi sta appassionando', 'Che bel libro che stiamo leggendo!']
 
-read(userId)
+// Welcome the user
+sayPromise(welcomeUser()).then(
+    () => read(userId) // Start reading
+);
