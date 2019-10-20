@@ -56,6 +56,51 @@ function sayBye(testo) {
 }
 
 
+function sayCall(msg, callback) {
+    var msg = new SpeechSynthesisUtterance(msg);
+    speechSynthesis.speak(msg);
+    callback()
+}
+
+function closeApp() {
+    sayPromise("Mi spengo subito").then(
+        () => ipcRenderer.send('quit-main')
+    );    
+};
+
+function checkSpace(timeout) {
+    var is_fired = false;        
+    Mousetrap.bind('space', function() { 
+        if (!is_fired) {
+            // Bug di electron, se si preme spazio e si invia subito un ipc send impazzisce il cursore
+            setTimeout(function (){
+                window.speechSynthesis.cancel();
+                read(userId)
+            }, 1); 
+            is_fired = true
+        }                
+    });   
+    setTimeout(function() {
+        sayBye("Mi spengo subito")
+        ipcRenderer.send('quit-main')
+        console.log("quitting")
+    }, timeout)
+}
+
+function sayPromise (text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    speechSynthesis.speak(utterance);
+    return new Promise(resolve => {
+        const id = setInterval(() => {
+        if (speechSynthesis.speaking === false) {
+            clearInterval(id);
+            resolve();
+        }
+        }, 100);
+    });
+};
+  
+
 /* !!**** START *****!! */
 
 const read = (userId) => {
@@ -75,19 +120,25 @@ const read = (userId) => {
         }),
     
         success: function(response) {
-            console.log(response)
-    
-            if (response.payload.google.richResponse.items[1]) {
-                media = response.payload.google.richResponse.items[1].mediaResponse.mediaObjects[0]
-                say(response.payload.google.richResponse.items[0].simpleResponse.textToSpeech)        
-                console.log(media.contentUrl)
-                console.log(media.description)
-                ipcRenderer.send('open-audio-player', {name: media.name, description: media.description}, media.contentUrl)
+            if (response) {
+                textToSpeech = response.payload.google.richResponse.items[0].simpleResponse.textToSpeech;
+                if (response.payload.google.richResponse.items[1]) {
+                    media = response.payload.google.richResponse.items[1].mediaResponse.mediaObjects[0];
+                    sayPromise(textToSpeech).then(
+                        () => ipcRenderer.send('open-audio-player', {name: media.name, description: media.description}, media.contentUrl)
+                    );                    
+                } else {
+                    // Says error and close the app
+                    sayPromise(textToSpeech).then(
+                            ()=> closeApp()
+                    )
+                }
             } else {
-                say(response.payload.google.richResponse.items[0].simpleResponse.textToSpeech)
-                sayBye("Mi spengo subito")
-                ipcRenderer.send('quit-main')
-            }
+                sayPromise('Non posso connettermi ad internet, verifica la tua connessione.').then(
+                    () => closeApp()
+                )
+            }    
+            
             
         }
     });
@@ -95,6 +146,8 @@ const read = (userId) => {
 
 
 read(userId)
+
+
 
 ipcRenderer.on('reading-finished', function() {
     $.ajax({
@@ -114,24 +167,25 @@ ipcRenderer.on('reading-finished', function() {
     
         success: function(response) {
             console.log(response)
-            say(response.payload.google.richResponse.items[0].simpleResponse.textToSpeech)
-            say("Se sì premi spazio, altrimenti mi spegnerò tra un minuto.")    
-            var is_fired = false;        
-            Mousetrap.bind('space', function() { 
-                if (!is_fired) {
-                    // Bug di electron, se si preme spazio e si invia subito un ipc send impazzisce il cursore
-                    setTimeout(function (){
-                        window.speechSynthesis.cancel();
-                        read(userId)
-                    }, 1); 
-                    is_fired = true
-                }                
-            });   
-            setTimeout(function() {
-                sayBye("Mi spengo subito")
-                ipcRenderer.send('quit-main')
-                console.log("quitting")
-            }, 60000)    
+            if (response) {
+                textToSpeech = response.payload.google.richResponse.items[0].simpleResponse.textToSpeech;
+
+                if (textToSpeech.includes('hai terminato il libro')) {
+                    sayPromise(textToSpeech)
+                    closeApp();
+                } else {
+                    sayPromise(textToSpeech).then(
+                        () => say("Se sì premi spazio, altrimenti mi spegnerò tra un minuto.")
+                    )                    
+                    checkSpace(60000);
+                }
+            } else {
+                sayPromise('Non posso connettermi ad internet, verifica la tua connessione.').then(
+                    () => closeApp()
+                )
+            }      
+                
+                
         }
     });
 })
