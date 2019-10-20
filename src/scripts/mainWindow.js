@@ -1,28 +1,10 @@
 /* !!**** REQUIREMENTS *****!! */
 const ipcRenderer = require( "electron" ).ipcRenderer;
-const electron = require('electron');
-const extract = require('extract-zip');
 const remote = require('electron').remote;
-var store = remote.getGlobal('store')
 var userData = remote.getGlobal('userData');
 const Mousetrap = require('mousetrap');
-var fs = require('fs');
 const userId= userData.get('userId');
-const request = require('request')
 window.$ = window.jquery = require('jquery')
-const EventEmitter = require('events');
-class MyEmitter extends EventEmitter {}
-const downloading = new MyEmitter();
-
-
-/* !!**** DEBUG CODE *****!! */
-document.addEventListener("keydown", function (e) {
-    if (e.which === 116) {
-        require('remote').getCurrentWindow().toggleDevTools();
-    } else if (e.which === 117) {
-        location.reload();
-    }
-});
 
 // Una volta modificato il contenuto della pagina la mostra
 ipcRenderer.send('show-me');
@@ -35,7 +17,6 @@ document.getElementById('hello').innerHTML = `Ciao ${userName},`
 
 /* !!**** FUNCTIONS *****!! */
 
-
 // first run
 function firstRun() {
     // First run
@@ -45,21 +26,6 @@ function firstRun() {
 function say(msg) {
     var msg = new SpeechSynthesisUtterance(msg);
     speechSynthesis.speak(msg);
-}
-
-
-// say and close app
-function sayBye(testo) {
-    var speech = new SpeechSynthesisUtterance(testo); 
-    speech.onend = close
-    speechSynthesis.speak(speech);
-}
-
-
-function sayCall(msg, callback) {
-    var msg = new SpeechSynthesisUtterance(msg);
-    speechSynthesis.speak(msg);
-    callback()
 }
 
 function closeApp() {
@@ -81,9 +47,7 @@ function checkSpace(timeout) {
         }                
     });   
     setTimeout(function() {
-        sayBye("Mi spengo subito")
-        ipcRenderer.send('quit-main')
-        console.log("quitting")
+        closeApp();
     }, timeout)
 }
 
@@ -99,9 +63,6 @@ function sayPromise (text) {
         }, 100);
     });
 };
-  
-
-/* !!**** START *****!! */
 
 const read = (userId) => {
     $.ajax({
@@ -144,11 +105,6 @@ const read = (userId) => {
     });
 }
 
-
-read(userId)
-
-
-
 ipcRenderer.on('reading-finished', function() {
     $.ajax({
         url: "https://webhook.lettoreaudiolibri.it/app.php",
@@ -189,3 +145,7 @@ ipcRenderer.on('reading-finished', function() {
         }
     });
 })
+
+/* !!**** START *****!! */
+
+read(userId)
