@@ -6,17 +6,11 @@ const Mousetrap = require('mousetrap');
 const userId= userData.get('userId');
 window.$ = window.jquery = require('jquery')
 
-// Una volta modificato il contenuto della pagina la mostra
-ipcRenderer.send('show-me');
-
-/* !!**** PAGE CONTENT *****!! */
-var userName = userData.get('name');
-document.getElementById('hello').innerHTML = `Ciao ${userName},`
-
-
+// Required constants
+const welcomeMessages = ['come va?', 'tutto bene?', 'oggi ti trovo bene', 'spero vada tutto bene', 'io sto bene e tu?', 'che bello poter trascorrere del tempo insieme']
+const sentences = ['Ti ho già detto che mi piace molto leggere?', 'Non vedo lora dicontinuare a leggere!', 'Finalmente leggiamo qualcosa!', 'Questo libro mi sta appassionando', 'Che bel libro che stiamo leggendo!']
 
 /* !!**** FUNCTIONS *****!! */
-
 // first run
 function firstRun() {
     // First run
@@ -173,8 +167,10 @@ ipcRenderer.on('reading-finished', function() {
 })
 
 /* !!**** START *****!! */
-const welcomeMessages = ['come va?', 'tutto bene?', 'oggi ti trovo bene', 'spero vada tutto bene', 'io sto bene e tu?', 'che bello poter trascorrere del tempo insieme']
-const sentences = ['Ti ho già detto che mi piace molto leggere?', 'Non vedo lora dicontinuare a leggere!', 'Finalmente leggiamo qualcosa!', 'Questo libro mi sta appassionando', 'Che bel libro che stiamo leggendo!']
+//Modify the page content
+var userName = userData.get('name');
+document.getElementById('hello').innerHTML = `Ciao ${userName},`
+ipcRenderer.send('show-me'); // Una volta modificato il contenuto della pagina la mostra
 
 // Welcome the user
 sayPromise(welcomeUser()).then(

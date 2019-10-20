@@ -33,8 +33,7 @@ defaults: {
     stats: {
         runs: 1,
         completedBooks: undefined
-    }  
-    
+    }    
 }
 });
 
@@ -215,7 +214,6 @@ ipc.on('login-user-id', (event, userId) => {
             app.quit();
         }
       });
-
     loginWindow.close()
 });
 
@@ -237,6 +235,5 @@ ipc.on('quit', function() {
         if (response == 0) {
             app.quit()
         }
-      });
-    
+      });    
 });
