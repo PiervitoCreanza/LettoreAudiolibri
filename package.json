@@ -12,7 +12,7 @@
     "bootstrap": "^4.3.1",
     "electron-localshortcut": "^3.1.0",
     "extract-zip": "^1.6.7",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "mousetrap": "^1.6.3",
     "npm": "^6.9.0",
     "request": "^2.88.0"
